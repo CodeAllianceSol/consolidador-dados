@@ -1,0 +1,128 @@
+/* Reset básico */
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+/* Corpo da página */
+body {
+    font-family: 'Inter', 'Segoe UI', sans-serif;
+    background: linear-gradient(to right, #edf2f7, #f8fafc);
+    color: #2d3748;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    padding: 60px 20px;
+    min-height: 100vh;
+}
+
+/* Título com ícone */
+h1 {
+    font-size: 26px;
+    margin-bottom: 30px;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    color: #1a202c;
+}
+
+h1::before {
+    content: '';
+    background-image: url('/static/icon.svg'); /* Adicione seu ícone aqui */
+    background-size: contain;
+    width: 30px;
+    height: 30px;
+    display: inline-block;
+}
+
+/* Cartão central */
+form {
+    background-color: #ffffff;
+    padding: 35px 40px;
+    border-radius: 14px;
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.05);
+    width: 100%;
+    max-width: 460px;
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+}
+
+/* Labels */
+label {
+    font-weight: 600;
+    font-size: 15px;
+    margin-bottom: 4px;
+    color: #2d3748;
+}
+
+/* Upload inputs */
+input[type="file"] {
+    padding: 10px;
+    border: 2px dashed #cbd5e0;
+    border-radius: 10px;
+    background-color: #f7fafc;
+    font-size: 14px;
+    cursor: pointer;
+    transition: border 0.3s;
+}
+
+input[type="file"]:hover {
+    border-color: #4299e1;
+}
+
+/* Botão enviar */
+input[type="submit"] {
+    background: linear-gradient(90deg, #4299e1, #3182ce);
+    color: white;
+    padding: 14px;
+    font-size: 15px;
+    font-weight: 600;
+    border: none;
+    border-radius: 10px;
+    cursor: pointer;
+    transition: transform 0.2s ease, box-shadow 0.2s ease;
+}
+
+input[type="submit"]:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 6px 20px rgba(66, 153, 225, 0.4);
+}
+
+/* Link de download */
+.download {
+    margin-top: 25px;
+    text-align: center;
+}
+
+.download a {
+    background-color: #38a169;
+    color: white;
+    padding: 10px 20px;
+    border-radius: 8px;
+    text-decoration: none;
+    font-weight: bold;
+    display: inline-block;
+    transition: background-color 0.3s ease;
+}
+
+.download a:hover {
+    background-color: #2f855a;
+}
+
+/* Responsividade */
+@media (max-width: 500px) {
+    form {
+        padding: 25px 20px;
+    }
+
+    h1 {
+        font-size: 22px;
+    }
+
+    h1::before {
+        width: 24px;
+        height: 24px;
+    }
+}
