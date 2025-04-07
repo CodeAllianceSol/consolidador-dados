@@ -1,18 +1,35 @@
 import os
 import pandas as pd
-from flask import Flask, render_template, request, send_file, redirect, url_for
+from flask import Flask, render_template, request, send_file, redirect, url_for, flash
 from werkzeug.utils import secure_filename
 
 app = Flask(__name__)
 app.config['UPLOAD_FOLDER'] = 'uploads'
+app.secret_key = 'supersecretkey'  # Necessário para flash()
 
 # Cria pasta de uploads se não existir
 os.makedirs(app.config['UPLOAD_FOLDER'], exist_ok=True)
 
-def consolidar_dados(caminho_csv, caminho_excel):
-    df_csv = pd.read_csv(caminho_csv, sep=';', encoding='utf-8')
-    df_excel = pd.read_excel(caminho_excel, sheet_name='Historico_adiantamento')
+def consolidar_dados(lista_csv, lista_excel):
+    # Concatena todos os CSVs
+    df_csv = pd.concat([
+        pd.read_csv(file, sep=';', encoding='utf-8')
+        for file in lista_csv
+    ], ignore_index=True)
 
+    # Concatena todos os Excels
+    df_excel = pd.concat([
+        pd.read_excel(file, sheet_name='Historico_adiantamento', engine='openpyxl')
+        for file in lista_excel
+    ], ignore_index=True)
+
+    # Concatena todos os Excels
+    df_excel = pd.concat([
+        pd.read_excel(file, sheet_name='Historico_adiantamento', engine='openpyxl')
+        for file in lista_excel
+    ], ignore_index=True)
+
+    # Processamento dos dados
     df_csv['valor'] = df_csv['valor'].str.replace(',', '.').astype(float)
     consolidado_ifood = df_csv.groupby('id_da_pessoa_entregadora').agg({
         'recebedor': 'first',
@@ -40,21 +57,19 @@ def consolidar_dados(caminho_csv, caminho_excel):
 @app.route('/', methods=['GET', 'POST'])
 def index():
     if request.method == 'POST':
-        csv_file = request.files['csv_file']
-        excel_file = request.files['excel_file']
+        csv_files = request.files.getlist('csv_file')
+        excel_files = request.files.getlist('excel_file')
 
-        if csv_file and excel_file:
-            csv_path = os.path.join(app.config['UPLOAD_FOLDER'], secure_filename(csv_file.filename))
-            excel_path = os.path.join(app.config['UPLOAD_FOLDER'], secure_filename(excel_file.filename))
-
-            csv_file.save(csv_path)
-            excel_file.save(excel_path)
-
-            resultado = consolidar_dados(csv_path, excel_path)
+        if csv_files and excel_files:
+            resultado = consolidar_dados(csv_files, excel_files)
             resultado_path = os.path.join(app.config['UPLOAD_FOLDER'], 'resultado_consolidado.xlsx')
             resultado.to_excel(resultado_path, index=False)
 
-            return redirect(url_for('download_resultado'))
+            flash('✅ Arquivo gerado com sucesso!')
+            return redirect(url_for('index'))
+
+        else:
+            flash('⚠️ Por favor, envie todos os arquivos necessários.')
 
     return render_template('index.html')
 
